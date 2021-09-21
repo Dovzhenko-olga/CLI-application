@@ -1,6 +1,6 @@
 const yargs = require('yargs');
 const { hideBin } = require('yargs/helpers');
-const contactsOperations = require('./contacts');
+const contactsOperations = require('./controllers/contacts');
 
 const arr = hideBin(process.argv);
 const { argv } = yargs(arr);
@@ -10,11 +10,15 @@ const { argv } = yargs(arr);
   switch (action) {
     case 'list':
       const contacts = await contactsOperations.listContacts();
-      console.log(contacts);
+      console.table(contacts);
       break;
 
     case 'get':
       const contact = await contactsOperations.getContactById(id);
+      if (!contact) {
+        console.log(`There is no contact №${id}`);
+        return;
+    }
       console.log(contact);
       break;
 
@@ -30,6 +34,15 @@ const { argv } = yargs(arr);
         return;
     }
       console.log('Contact deleted');
+      break;
+
+    case 'update':
+      const updateContact = await contactsOperations.updateById(id, name, email, phone);
+      if (!updateContact) {
+        console.log(`There is no contact №${id}`);
+        return;
+    }
+      console.log(updateContact);
       break;
 
     default:
